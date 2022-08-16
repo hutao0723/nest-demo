@@ -1,0 +1,43 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// 用户列表
+model User {
+  id         String     @id @default(uuid())
+  git_id     Int
+  name       String
+  username   String
+  email      String
+  iphone     String
+  avatar_url String
+  event      Event[]
+}
+
+// 工程列表
+model Project {
+  id          String     @id @default(uuid())
+  git_id      Int
+  name        String
+  description String?
+  event       Event[]
+}
+
+// 事件表
+model Event {
+  id         String      @id @default(uuid())
+  type       String
+  createdAt  String      
+  user       User        @relation(fields: [user_id], references: [id])
+  user_id    String
+  project    Project     @relation(fields: [project_id], references: [id])
+  project_id String
+}
