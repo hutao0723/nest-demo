@@ -14,19 +14,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
         const response = ctx.getResponse<Response>();
         const request = ctx.getRequest<Request>();
         const status = exception.getStatus();
+        const message = exception.message;
 
-        const logFormat = ` <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    Request original url: ${request.originalUrl}
-    Method: ${request.method}
-    IP: ${request.ip}
-    Status code: ${status}
-    Response: ${exception.toString()} \n  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    `;
-        // Logger.info(logFormat);
         response.status(status).json({
-            statusCode: status,
-            error: exception.message,
-            msg: `${status >= 500 ? 'Service Error' : 'Client Error'}`,
+            success: false,
+            code: status,
+            message,
         });
     }
 }

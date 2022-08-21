@@ -4,12 +4,19 @@ import {
     MiddlewareConsumer,
     RequestMethod,
 } from '@nestjs/common';
+import { ConfigModule } from 'nestjs-config';
+import { resolve } from 'path';
+
+
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { GitModule } from './modules/git/git.module';
 
 @Module({
     // 导入模块的列表，如果需要使用其他模块的服务，需要通过这里导入
-    imports: [GitModule],
+    imports: [
+        ConfigModule.load(resolve(__dirname, 'config', '**/!(*.d).{ts,js}')),
+        GitModule
+    ],
     // 处理http请求
     controllers: [],
     // Nest.js注入器实例化的提供者（服务提供者），处理具体的业务逻辑，各个模块之间可以共享
