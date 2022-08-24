@@ -3,8 +3,7 @@ import {
     HttpException,
     HttpStatus,
     Injectable,
-    PipeTransform,
-    Type,
+    PipeTransform
 } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
@@ -18,13 +17,15 @@ export class ValidationPipe implements PipeTransform {
      * @returns
      */
     async transform(value: any, { metatype }: ArgumentMetadata) {
+    
         // 如果没有传入验证规则，则不验证，直接返回数据
         if (!metatype || !this.toValidate(metatype)) {
             return value;
         }
 
         // 将对象转换为 Class 来验证
-        const object = plainToInstance(metatype, value);
+        const object = plainToInstance(metatype,value);
+
         const errors = await validate(object);
 
         if (errors.length > 0) {
@@ -38,6 +39,7 @@ export class ValidationPipe implements PipeTransform {
                 HttpStatus.BAD_REQUEST,
             );
         }
+
         return value;
     }
 

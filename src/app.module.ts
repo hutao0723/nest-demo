@@ -7,17 +7,22 @@ import {
 import { ConfigModule } from 'nestjs-config';
 import { resolve } from 'path';
 
-
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { GitModule } from './modules/git/git.module';
 import { UserModule } from './modules/user/user.module';
+import { RoleGuardModule } from './modules/role-guard/role-guard.module';
 
+// 获取环境变量
+const ENV = process.env.NODE_ENV;
 @Module({
     // 导入模块的列表，如果需要使用其他模块的服务，需要通过这里导入
     imports: [
-        ConfigModule.load(resolve(__dirname, 'config', '**/!(*.d).{ts,js}')),
+        ConfigModule.load(resolve(__dirname, 'config', '**/!(*.d).{ts,js}'),{
+            path: resolve(process.cwd(), !ENV ? '.env' : `.env.${ENV}`)   
+        }),
         GitModule,
-        UserModule
+        UserModule,
+        RoleGuardModule
     ],
     // 处理http请求
     controllers: [],
