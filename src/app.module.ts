@@ -10,12 +10,14 @@ import { resolve } from 'path';
 
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { GitModule } from './modules/git/git.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
     // 导入模块的列表，如果需要使用其他模块的服务，需要通过这里导入
     imports: [
         ConfigModule.load(resolve(__dirname, 'config', '**/!(*.d).{ts,js}')),
-        GitModule
+        GitModule,
+        UserModule
     ],
     // 处理http请求
     controllers: [],

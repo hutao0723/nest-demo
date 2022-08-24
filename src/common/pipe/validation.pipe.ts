@@ -6,18 +6,27 @@ import {
     PipeTransform,
     Type,
 } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 
 @Injectable()
 export class ValidationPipe implements PipeTransform {
-    async transform(value: any, metadata: ArgumentMetadata) {
-        const { metatype } = metadata;
+    // 为实现 PipeTransfrom，每个管道必须声明 transfrom() 方法
+    /**
+     * @param value  参数是当前处理的方法参数(在被路由处理程序方法接收之前)
+     * @param metadata 前处理的方法参数的元数据
+     * @returns
+     */
+    async transform(value: any, { metatype }: ArgumentMetadata) {
+        // 如果没有传入验证规则，则不验证，直接返回数据
         if (!metatype || !this.toValidate(metatype)) {
             return value;
         }
-        const object = plainToClass(metatype, value);
+
+        // 将对象转换为 Class 来验证
+        const object = plainToInstance(metatype, value);
         const errors = await validate(object);
+
         if (errors.length > 0) {
             const errObj = {};
             errors.forEach((err) => {
@@ -32,8 +41,8 @@ export class ValidationPipe implements PipeTransform {
         return value;
     }
 
-    private toValidate(metatype: Type<any>): boolean {
-        const types = [String, Boolean, Number, Array, Object];
-        return !types.find((type) => metatype === type);
+    private toValidate(metatype: Function): boolean {
+        const types: Function[] = [String, Boolean, Number, Array, Object];
+        return !types.includes(metatype);
     }
 }
